@@ -1,0 +1,25 @@
+{
+  "name": "tu2bo-notificationserver",
+  "version": "1.0.0",
+  "description": "Notification Server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olifer97/tu2bo-notificationserver.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olifer97/tu2bo-notificationserver/issues"
+  },
+  "homepage": "https://github.com/olifer97/tu2bo-notificationserver#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "expo-server-sdk": "^3.5.1",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.13.0"
+  }
+}
