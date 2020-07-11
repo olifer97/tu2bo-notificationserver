@@ -50,7 +50,6 @@ const sendNotificationToUser = (info, username) => {
   tokenRef.get()
     .then(doc => {
       if (doc.exists) {
-        console.log("Document data:", doc.data().token);
         if(!sendNotification({
           ...info,
           pushToken: doc.data().expoToken.data
