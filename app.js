@@ -22,7 +22,6 @@ let observer = db.collection('chats')
   .onSnapshot(querySnapshot => {
     querySnapshot.docChanges().forEach(change => {
       if (change.type === 'modified') {
-        console.log('aber q cambio', change)
         console.log('Se cambio la info: ', change.doc.data());
         const { user1, user2, lastMessage } = change.doc.data();
         const sender = lastMessage.user;
