@@ -24,22 +24,27 @@ let observer = db.collection('chats')
       if (change.type === 'modified') {
         console.log('Se cambio la info: ', change.doc.data());
         const { user1, user2, lastMessage } = change.doc.data();
-        const sender = lastMessage.user;
+        if(!lastMessage.read) {
+          console.log("Message unread!");
 
-        const reciever =
-          sender.name === user1.username ? user2.username : user1.username;
+          const sender = lastMessage.user;
 
-        const info = {
-          title: 'Mensaje nuevo',
-          body: `${sender.name}: ${lastMessage.text}`,
-          data: {
-            type: 'CHAT_NOTIFICATION',
-            user_id: sender._id,
-            username: sender.name
+          const reciever =
+            sender.name === user1.username ? user2.username : user1.username;
+
+          const info = {
+            title: 'Mensaje nuevo',
+            body: `${sender.name}: ${lastMessage.text}`,
+            data: {
+              type: 'CHAT_NOTIFICATION',
+              user_id: sender._id,
+              username: sender.name
+            }
           }
-        }
 
-        sendNotificationToUser(info, reciever);
+          sendNotificationToUser(info, reciever);
+        }
+        
       }
     });
   });
