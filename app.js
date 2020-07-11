@@ -73,7 +73,7 @@ const sendNotificationToUser = (info, username) => {
 app.use(express.json());
 
 
-app.post("/notification", (req, res) => {
+app.post("/notifications", (req, res) => {
   sendNotificationToUser(req.body.notification, req.body.username);
   res.send(`Send notification`);
 });
