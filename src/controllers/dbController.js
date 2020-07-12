@@ -2,7 +2,7 @@ module.exports = function FirestoreHandler() {
   const handleUserToken = (db, username, callback) => {
     const tokenRef = db.doc(`tokens/${username}`);
 
-    tokenRef
+    return tokenRef
       .get()
       .then(doc => {
         if (doc.exists) {

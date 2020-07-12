@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 module.exports = function bodyValidatorMiddleware() {
   const nottificationValidations = [
     body(['notification', 'username'], 'Missing value').exists(),
-    body(['visibility'], 'Invalid visibility').isIn(['public', 'private']),
+    body(['notification.title', 'notification.data'], 'Invalid notification').exists()
   ];
 
   const validate = (req, res, next) => {
@@ -18,6 +18,6 @@ module.exports = function bodyValidatorMiddleware() {
 
   return {
     nottificationValidations,
-    validate,
+    validate
   };
 };

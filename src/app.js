@@ -3,7 +3,6 @@ const cors = require('cors');
 
 const bodyValidator = require('./middlewares/bodyValidatorMiddleware')();
 const sendNotification = require('./expo');
-const handleUserToken = require('./controllers/dbController');
 
 const FirestoreHandler = require('./controllers/dbController')();
 
@@ -47,10 +46,11 @@ module.exports = function app(db) {
     (req, res) => {
       const info = req.body.notification;
       const username = req.body.username;
-      handleUserToken(db, username, token =>
-        sendNotification({ ...info, token })
-      );
-      res.send(`Send notification`);
+      console.log(username)
+      FirestoreHandler.handleUserToken(db, username, pushToken =>
+        sendNotification({ ...info, pushToken })
+      ).then(() => res.send(`Send notification`));
+      
     }
   );
 
