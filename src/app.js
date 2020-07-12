@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
 
+const swaggerDocument = require('./static/swagger.json');
 const bodyValidator = require('./middlewares/bodyValidatorMiddleware')();
 const sendNotification = require('./expo');
 
@@ -29,6 +31,8 @@ module.exports = function app(db) {
 
   app.use(express.json());
 
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
   app.get('/', (req, res) => {
     res.status(200);
     res.send('Hi! This is where lives the Notification Server!');
@@ -49,8 +53,7 @@ module.exports = function app(db) {
       console.log(username)
       FirestoreHandler.handleUserToken(db, username, pushToken =>
         sendNotification({ ...info, pushToken })
-      ).then(() => res.send(`Send notification`));
-      
+      ).then(() => res.status(204));
     }
   );
 

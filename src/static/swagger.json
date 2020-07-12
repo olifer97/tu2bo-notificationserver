@@ -1,0 +1,93 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Notification server for TutuboApp",
+    "version": "1.0.0",
+    "title": "Notification Server"
+  },
+  "tags": [
+    {
+      "name": "notifications",
+      "description": "Operations about notifications"
+    }
+  ],
+  "paths": {
+    "/notifications": {
+      "post": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Send notification to user",
+        "operationId": "createNotification",
+        "requestBody": {
+          "description": "Send notification to user",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/NotificationNew"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Notification send"
+          },
+          "400": {
+            "description": "Missing fields / Invalid notification"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "pathVideoId": {
+        "in": "path",
+        "name": "videoId",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "schemas": {
+      "NotificationNew": {
+        "type": "object",
+        "required": [
+          "notification",
+          "username"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "aUsername"
+          },
+          "notification": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "example": "New notification"
+              },
+              "body": {
+                "type": "string",
+                "example": "this is a new notification!"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
