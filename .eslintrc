@@ -1,0 +1,11 @@
+{
+  "extends": "airbnb-base",
+  "env": {
+    "jest": true
+  },
+  "rules":{
+    "max-len": ["error", 80, 2],
+    "object-curly-newline": ["error", { "consistent": true }],
+    "no-param-reassign": ["error", { "props": false }]
+  }
+}

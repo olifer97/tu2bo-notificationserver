@@ -7,29 +7,28 @@ module.exports = function FirestoreHandler() {
       .then(doc => {
         if (doc.exists) {
           if (!callback(doc.data().expoToken.data)) {
-            console.log("Delete push notification token");
+            console.log('Delete push notification token');
             tokenRef.delete();
           }
           return 0;
-        } else {
-          // doc.data() will be undefined in this case
-          console.log("No push notification token");
-          return 0;
         }
+        // doc.data() will be undefined in this case
+        console.log('No push notification token');
+        return 0;
       })
       .catch(error => {
-        console.log("Error getting document:", error);
+        console.log('Error getting document:', error);
       });
   };
 
   const chatObserver = (db, handleNewMessage) =>
-    db.collection("chats").onSnapshot(querySnapshot => {
+    db.collection('chats').onSnapshot(querySnapshot => {
       querySnapshot.docChanges().forEach(change => {
-        if (change.type === "modified") {
-          console.log("Change in db: ", change.doc.data());
+        if (change.type === 'modified') {
+          console.log('Change in db: ', change.doc.data());
           const { user1, user2, lastMessage } = change.doc.data();
           if (!lastMessage.read) {
-            console.log("Message unread!");
+            console.log('Message unread!');
 
             const sender = lastMessage.user;
 
