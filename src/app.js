@@ -1,28 +1,14 @@
-const express = require("express");
-const admin = require('firebase-admin');
-const sendNotification = require('./expoService');
+const express = require('express');
+const cors = require('cors');
 
-const app = express();
-
-const cors = require("cors");
-
-let serviceAccount = require('./tu2bo-131ec-32a6ace4f2e8.json'); //secret ask oli
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-let db = admin.firestore();
-
-app.use(cors());
-
-const PORT_NUMBER = 3000;
+const sendNotification = require('./expo');
+const db = require('./db')();
 
 let observer = db.collection('chats')
   .onSnapshot(querySnapshot => {
     querySnapshot.docChanges().forEach(change => {
       if (change.type === 'modified') {
-        console.log('Se cambio la info: ', change.doc.data());
+        console.log('Change in db: ', change.doc.data());
         const { user1, user2, lastMessage } = change.doc.data();
         if(!lastMessage.read) {
           console.log("Message unread!");
@@ -75,14 +61,26 @@ const sendNotificationToUser = (info, username) => {
 }
 
 
-app.use(express.json());
+module.exports = function app() {
+  const app = express();
+  app.use(cors());
 
+  app.use(express.json());
 
-app.post("/notifications", (req, res) => {
-  sendNotificationToUser(req.body.notification, req.body.username);
-  res.send(`Send notification`);
-});
+  app.get('/', (req, res) => {
+    res.status(200);
+    res.send('Hi! This is where lives the Notification Server!');
+  })
 
-app.listen(PORT_NUMBER, () => {
-  console.log(`Server Online on Port ${PORT_NUMBER}`);
-});
+  app.get('/ping', (req, res) => {
+    res.status(200);
+    res.send('Im alive');
+  });
+
+  app.post("/notifications", (req, res) => {
+    sendNotificationToUser(req.body.notification, req.body.username);
+    res.send(`Send notification`);
+  });
+
+  return app;
+};
