@@ -1,68 +1,27 @@
 const express = require('express');
 const cors = require('cors');
-
 const sendNotification = require('./expo');
-const db = require('./db')();
+const handleUserToken = require('./controllers/dbController');
 
-let observer = db.collection('chats')
-  .onSnapshot(querySnapshot => {
-    querySnapshot.docChanges().forEach(change => {
-      if (change.type === 'modified') {
-        console.log('Change in db: ', change.doc.data());
-        const { user1, user2, lastMessage } = change.doc.data();
-        if(!lastMessage.read) {
-          console.log("Message unread!");
+const FirestoreHandler = require('./controllers/dbController')();
 
-          const sender = lastMessage.user;
+const handleNewMessage = (db, sender, reciever, text) => {
+  const info = {
+    title: 'Mensaje nuevo',
+    body: `${sender.name}: ${text}`,
+    data: {
+      type: 'CHAT_NOTIFICATION',
+      user_id: sender._id,
+      username: sender.name
+    }
+  }
 
-          const reciever =
-            sender.name === user1.username ? user2.username : user1.username;
-
-          const info = {
-            title: 'Mensaje nuevo',
-            body: `${sender.name}: ${lastMessage.text}`,
-            data: {
-              type: 'CHAT_NOTIFICATION',
-              user_id: sender._id,
-              username: sender.name
-            }
-          }
-
-          sendNotificationToUser(info, reciever);
-        }
-        
-      }
-    });
-  });
-
-const sendNotificationToUser = (info, username) => {
-  const tokenRef = db.doc(`tokens/${username}`);
-
-  tokenRef.get()
-    .then(doc => {
-      if (doc.exists) {
-        if(!sendNotification({
-          ...info,
-          pushToken: doc.data().expoToken.data
-        })) {
-          console.log("Delete push notification token")
-          tokenRef.delete()
-        }
-        return 0;
-      } else {
-        // doc.data() will be undefined in this case
-        console.log("No push notification token");
-        return 0;
-      }
-    })
-    .catch(error => {
-      console.log("Error getting document:", error);
-    });
+  FirestoreHandler.handleUserToken(db, reciever, (pushToken) => sendNotification({...info, pushToken}));
 }
 
-
-module.exports = function app() {
+module.exports = function app(db) {
   const app = express();
+  FirestoreHandler.chatObserver(db, handleNewMessage)
   app.use(cors());
 
   app.use(express.json());
@@ -78,7 +37,9 @@ module.exports = function app() {
   });
 
   app.post("/notifications", (req, res) => {
-    sendNotificationToUser(req.body.notification, req.body.username);
+    const info = req.body.notification;
+    const username = req.body.username;
+    handleUserToken(db, username,  (token) => sendNotification({...info, token}) );
     res.send(`Send notification`);
   });
 
