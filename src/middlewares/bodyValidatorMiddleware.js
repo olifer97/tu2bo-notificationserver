@@ -1,7 +1,7 @@
 const { body, validationResult } = require('express-validator');
 
 module.exports = function bodyValidatorMiddleware() {
-  const nottificationValidations = [
+  const notificationValidations = [
     body(['notification', 'username'], 'Missing value').exists(),
     body(['notification.title', 'notification.data'], 'Invalid notification').exists()
   ];
@@ -17,7 +17,7 @@ module.exports = function bodyValidatorMiddleware() {
   };
 
   return {
-    nottificationValidations,
+    notificationValidations,
     validate
   };
 };

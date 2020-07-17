@@ -10,14 +10,15 @@ module.exports = function FirestoreHandler() {
             console.log('Delete push notification token');
             tokenRef.delete();
           }
-          return 0;
+          return;
         }
         // doc.data() will be undefined in this case
         console.log('No push notification token');
-        return 0;
+        return;
       })
       .catch(error => {
         console.log('Error getting document:', error);
+        throw ('DB Error');
       });
   };
 

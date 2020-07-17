@@ -45,15 +45,19 @@ module.exports = function app(db) {
 
   app.post(
     '/notifications',
-    bodyValidator.nottificationValidations,
+    bodyValidator.notificationValidations,
     bodyValidator.validate,
     (req, res) => {
       const info = req.body.notification;
       const username = req.body.username;
-      console.log(username)
       FirestoreHandler.handleUserToken(db, username, pushToken =>
         sendNotification({ ...info, pushToken })
-      ).then(() => res.status(204));
+      )
+      .then(() => res.status(204))
+      .catch((error) => {
+        res.status(500)
+        res.send(error);
+      });
     }
   );
 
