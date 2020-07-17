@@ -4,8 +4,7 @@
   "description": "Notification Server",
   "main": "main.js",
   "scripts": {
-    "postinstall": "node setup.js",
-    "start": "node main.js",
+    "start": "node setup.js && node main.js",
     "test": "jest"
   },
   "repository": {
