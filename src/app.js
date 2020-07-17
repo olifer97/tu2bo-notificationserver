@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./static/swagger.json');
 const bodyValidator = require('./middlewares/bodyValidatorMiddleware')();
 const sendNotification = require('./expo');
+const notificationController = require('./controllers/notificationController');
 
 const FirestoreHandler = require('./controllers/dbController')();
 
@@ -35,7 +36,7 @@ module.exports = function app(db) {
 
   app.get('/', (req, res) => {
     res.status(200);
-    res.send('Hi! This is where lives the Notification Server!');
+    res.send('Hi! This is where Notification Server lives!');
   });
 
   app.get('/ping', (req, res) => {
@@ -47,18 +48,7 @@ module.exports = function app(db) {
     '/notifications',
     bodyValidator.notificationValidations,
     bodyValidator.validate,
-    (req, res) => {
-      const info = req.body.notification;
-      const username = req.body.username;
-      FirestoreHandler.handleUserToken(db, username, pushToken =>
-        sendNotification({ ...info, pushToken })
-      )
-      .then(() => res.status(204))
-      .catch((error) => {
-        res.status(500)
-        res.send(error);
-      });
-    }
+    notificationController(db, sendNotification).post
   );
 
   return app;
