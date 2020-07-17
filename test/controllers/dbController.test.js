@@ -24,10 +24,13 @@ let querySnapshot;
 
 let changesModified;
 
+beforeEach(() => {
+  handleNewMessage = jest.fn().mockReturnThis()
+})
+
 describe('chatObserver', () => {
   describe('when new chat arraives', () => {
-    beforeEach(() => {
-      handleNewMessage = jest.fn().mockReturnThis()
+    beforeEach(() => {      
       change = {
         type: 'modified',
         doc: {
@@ -60,7 +63,6 @@ describe('chatObserver', () => {
 
   describe('when chat is read', () => {
     beforeEach(() => {
-      handleNewMessage = jest.fn().mockReturnThis()
       change = {
         type: 'modified',
         doc: {
@@ -84,7 +86,7 @@ describe('chatObserver', () => {
       };
     });
 
-    test('should send notification', async () => {
+    test('should not send notification', async () => {
       await FirestoreHandler.chatObserver(db, handleNewMessage);
       expect(handleNewMessage).not.toHaveBeenCalled();
     });
