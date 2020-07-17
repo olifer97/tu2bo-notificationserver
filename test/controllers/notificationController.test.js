@@ -14,6 +14,7 @@ let body = {
 let tokenRef;
 let db;
 let sendNotification;
+let sendNotificationNotCalled;
 
 let req;
 let res;
@@ -29,6 +30,10 @@ beforeEach(() => {
     send: jest.fn(),
     json: jest.fn()
   };
+
+  sendNotification = jest.fn().mockReturnValue(true)
+
+  sendNotificationNotCalled = jest.fn().mockReturnThis()
 });
 
 describe('get', () => {
@@ -42,15 +47,14 @@ describe('get', () => {
           doc: jest.fn().mockReturnValue(tokenRef)
         };
   
-        sendNotification = jest.fn().mockReturnValue(true)
-  
-        notificationController = notificationControllerFactory(db, sendNotification);
+        notificationController = notificationControllerFactory(db, sendNotificationNotCalled);
         req.body = body; 
       });
   
       test('should respond with success', async () => {
         await notificationController.post(req, res);
         expect(res.status).toHaveBeenCalledWith(500);
+        expect(sendNotificationNotCalled).not.toHaveBeenCalled();
       });
   });
 
@@ -68,8 +72,6 @@ describe('get', () => {
         doc: jest.fn().mockReturnValue(tokenRef)
       };
 
-      sendNotification = jest.fn().mockReturnValue(true)
-
       notificationController = notificationControllerFactory(db, sendNotification);
       req.body = body; 
     });
@@ -77,6 +79,7 @@ describe('get', () => {
     test('should respond with success', async () => {
       await notificationController.post(req, res);
       expect(res.status).toHaveBeenCalledWith(204);
+      expect(sendNotification).toHaveBeenCalled();
     });
   });
 
@@ -95,13 +98,14 @@ describe('get', () => {
         doc: jest.fn().mockReturnValue(tokenRef)
       };
 
-      notificationController = notificationControllerFactory(db, sendNotification);
+      notificationController = notificationControllerFactory(db, sendNotificationNotCalled);
       req.body = body; 
     });
 
     test('should respond with also with success', async () => {
       await notificationController.post(req, res);
       expect(res.status).toHaveBeenCalledWith(204);
+      expect(sendNotificationNotCalled).not.toHaveBeenCalled();
     });
   });
 });
