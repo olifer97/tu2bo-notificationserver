@@ -10,6 +10,12 @@ let chatMessageNew = {
   }
 }
 
+let chatRead = {
+  lastMessage: {
+    read: true,
+  }
+}
+
 let handleNewMessage;
 
 let collectionRef;
@@ -17,8 +23,6 @@ let db;
 let querySnapshot;
 
 let changesModified;
-
-let onSucces;
 
 describe('chatObserver', () => {
   describe('when new chat arraives', () => {
@@ -38,7 +42,6 @@ describe('chatObserver', () => {
       
       collectionRef = {
         onSnapshot: (func) => {
-          console.log("ENTREEE")
           func(querySnapshot);
         }
       };
@@ -51,6 +54,39 @@ describe('chatObserver', () => {
     test('should send notification', async () => {
       await FirestoreHandler.chatObserver(db, handleNewMessage);
       expect(handleNewMessage).toHaveBeenCalled();
+    });
+  });
+
+
+  describe('when chat is read', () => {
+    beforeEach(() => {
+      handleNewMessage = jest.fn().mockReturnThis()
+      change = {
+        type: 'modified',
+        doc: {
+          data: jest.fn().mockReturnValue(chatRead)
+        }
+      } 
+      changesModified = [change]
+      
+      querySnapshot = {
+        docChanges: jest.fn().mockReturnValue(changesModified)
+      }
+      
+      collectionRef = {
+        onSnapshot: (func) => {
+          func(querySnapshot);
+        }
+      };
+
+      db = {
+        collection: jest.fn().mockReturnValue(collectionRef)
+      };
+    });
+
+    test('should send notification', async () => {
+      await FirestoreHandler.chatObserver(db, handleNewMessage);
+      expect(handleNewMessage).not.toHaveBeenCalled();
     });
   });
 });
