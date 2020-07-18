@@ -18,7 +18,7 @@ module.exports = function FirestoreHandler() {
       })
       .catch(error => {
         console.log('Error getting document:', error);
-        throw ('DB Error');
+        throw new Error('DB Error');
       });
   };
 
