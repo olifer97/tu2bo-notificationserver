@@ -7,7 +7,7 @@ module.exports = function notificationController(db, sendNotification) {
     return FirestoreHandler.handleUserToken(db, username, pushToken =>
       sendNotification({ ...info, pushToken })
     )
-    .then(() => res.status(204))
+    .then(() => res.status(204).send("ACK"))
     .catch((error) => {
       res.status(500);
       res.send(error.message);
